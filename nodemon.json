@@ -1,0 +1,15 @@
+{
+    "restartable": "rs",
+    "execMap": {
+        "js": "node --harmony"
+    },
+    "legacyWatch": true,
+    "watch": [
+        "*.env",
+        "*.js"
+    ],
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "ext": "js,json"
+}
