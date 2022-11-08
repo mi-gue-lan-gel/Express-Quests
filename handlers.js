@@ -1,5 +1,9 @@
 const database = require("./database");
 
+const welcome = (req, res) => {
+  res.send("Welcome to my favourite movie list");
+};
+
 const getMovies = (req, res) => {
   database
     .query("select * from movies")
@@ -58,9 +62,28 @@ const getUsersById = (req, res) => {
     });
 };
 
+const postUsers = (req, res) => {
+  const { firstname, lastname, email, city, language } = req.body;
+  database
+    .query(
+      "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?,?,?,?,?)",
+      [firstname, lastname, email, city, language]
+    )
+    .then(([result]) => {
+      console.log(result);
+      res.location(`/api/users/${result.insertId}`).sendStatus(201);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error saving the data");
+    });
+};
+
 module.exports = {
+  welcome,
   getMovies,
   getMovieById,
   getUsers,
-  getUsersById
+  getUsersById,
+  postUsers
 };
