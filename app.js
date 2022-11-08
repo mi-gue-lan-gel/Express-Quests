@@ -11,9 +11,12 @@ app.use(express.json());
 app.get("/", handlers.welcome);
 app.get("/api/movies", handlers.getMovies);
 app.get("/api/movies/:id", handlers.getMovieById);
+app.post("/api/movies", handlers.postMovies);
+app.put("/api/movies/:id", handlers.putMoviesById);
 app.get("/api/users", handlers.getUsers);
 app.get("/api/users/:id", handlers.getUsersById);
 app.post("/api/users", handlers.postUsers);
+app.put("/api/users/:id", handlers.putUsersById);
 
 app.listen(port, (err) => {
   if (err) {

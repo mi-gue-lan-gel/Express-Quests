@@ -4,6 +4,7 @@ const welcome = (req, res) => {
   res.send("Welcome to my favourite movie list");
 };
 
+// Movie handlers
 const getMovies = (req, res) => {
   database
     .query("select * from movies")
@@ -33,6 +34,46 @@ const getMovieById = (req, res) => {
     });
 };
 
+const postMovies = (req, res) => {
+  const { title, director, year, color, duration } = req.body;
+  database
+    .query(
+      "INSERT INTO movies(title, director, year, color, duration) VALUES (?,?,?,?,?)",
+      [title, director, year, color, duration]
+    )
+    .then(([result]) => {
+      res.location(`/api/movies/${result.insertId}`).sendStatus(201);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error saving the data");
+    });
+};
+
+const putMoviesById = (req, res) => {
+  const { title, director, year, color, duration } = req.body;
+  const id = parseInt(req.params.id);
+
+  database
+    .query(
+      "UPDATE movies SET title = ?, director = ?, year = ?, color = ?, duration = ? where id = ?",
+      [title, director, year, color, duration, id]
+    )
+    .then(([result]) => {
+      console.log(result);
+      if (result.affectedRows) {
+        res.sendStatus(200);
+      } else {
+        res.status(404).send("ID not found")
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error saving the data");
+    });
+};
+
+// User handlers
 const getUsers = (req, res) => {
   database
     .query("select * from users")
@@ -70,8 +111,30 @@ const postUsers = (req, res) => {
       [firstname, lastname, email, city, language]
     )
     .then(([result]) => {
-      console.log(result);
       res.location(`/api/users/${result.insertId}`).sendStatus(201);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error saving the data");
+    });
+};
+
+const putUsersById = (req, res) => {
+  const { firstname, lastname, email, city, language } = req.body;
+  const id = parseInt(req.params.id);
+
+  database
+    .query(
+      "UPDATE users SET firstname = ?, lastname = ?, email = ? , city = ?, language = ? where id = ?",
+      [firstname, lastname, email, city, language, id]
+    )
+    .then(([result]) => {
+      console.log(result);
+      if (result.affectedRows) {
+        res.sendStatus(200);
+      } else {
+        res.status(404).send("ID not found")
+      }
     })
     .catch((err) => {
       console.error(err);
@@ -83,7 +146,10 @@ module.exports = {
   welcome,
   getMovies,
   getMovieById,
+  postMovies,
+  putMoviesById,
   getUsers,
   getUsersById,
-  postUsers
+  postUsers,
+  putUsersById
 };
