@@ -13,10 +13,13 @@ app.get("/api/movies", handlers.getMovies);
 app.get("/api/movies/:id", handlers.getMovieById);
 app.post("/api/movies", handlers.postMovies);
 app.put("/api/movies/:id", handlers.putMoviesById);
+app.delete("/api/movies/:id", handlers.deleteMoviesById);
+
 app.get("/api/users", handlers.getUsers);
 app.get("/api/users/:id", handlers.getUsersById);
 app.post("/api/users", handlers.postUsers);
 app.put("/api/users/:id", handlers.putUsersById);
+app.delete("/api/users/:id", handlers.deleteUsersById);
 
 app.listen(port, (err) => {
   if (err) {

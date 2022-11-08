@@ -60,7 +60,6 @@ const putMoviesById = (req, res) => {
       [title, director, year, color, duration, id]
     )
     .then(([result]) => {
-      console.log(result);
       if (result.affectedRows) {
         res.sendStatus(200);
       } else {
@@ -72,6 +71,27 @@ const putMoviesById = (req, res) => {
       res.status(500).send("Error saving the data");
     });
 };
+
+const deleteMoviesById = (req, res) => {
+  const id = parseInt(req.params.id);
+
+  database
+    .query(
+      "Delete from movies where id = ?", [id]
+    )
+    .then(([result]) => {
+      if (result.affectedRows) {
+        res.sendStatus(204);
+      } else {
+        res.status(404).send("ID not found")
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error saving the data");
+    });
+};
+
 
 // User handlers
 const getUsers = (req, res) => {
@@ -129,9 +149,28 @@ const putUsersById = (req, res) => {
       [firstname, lastname, email, city, language, id]
     )
     .then(([result]) => {
-      console.log(result);
       if (result.affectedRows) {
         res.sendStatus(200);
+      } else {
+        res.status(404).send("ID not found")
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error saving the data");
+    });
+};
+
+const deleteUsersById = (req, res) => {
+  const id = parseInt(req.params.id);
+
+  database
+    .query(
+      "Delete from users where id = ?", [id]
+    )
+    .then(([result]) => {
+      if (result.affectedRows) {
+        res.sendStatus(204);
       } else {
         res.status(404).send("ID not found")
       }
@@ -148,8 +187,10 @@ module.exports = {
   getMovieById,
   postMovies,
   putMoviesById,
+  deleteMoviesById,
   getUsers,
   getUsersById,
   postUsers,
-  putUsersById
+  putUsersById,
+  deleteUsersById
 };
