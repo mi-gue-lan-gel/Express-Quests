@@ -6,8 +6,14 @@ const welcome = (req, res) => {
 
 // Movie handlers
 const getMovies = (req, res) => {
+  let sql = "select * from movies";
+  let sqlValues = [];
+  req.query.color ? (sql += " where color = ?") && (sqlValues.unshift(req.query.color)) : null;
+  req.query.max_duration ? (sql += " where duration <= ?") && (sqlValues.push(req.query.max_duration)) : null;
+  req.query.color && req.query.max_duration ? (sql = "select * from movies where color = ? and duration <= ?") && (sqlValues.push(req.query.color, req.query.max_duration)) : null;
+
   database
-    .query("select * from movies")
+    .query(sql, sqlValues)
     .then(([movies]) => {
       res.json(movies);
     })
@@ -19,6 +25,7 @@ const getMovies = (req, res) => {
 
 const getMovieById = (req, res) => {
   const id = parseInt(req.params.id);
+
   database
     .query("select * from movies where id = ?", [id])
     .then(([movie]) => {
@@ -36,6 +43,7 @@ const getMovieById = (req, res) => {
 
 const postMovies = (req, res) => {
   const { title, director, year, color, duration } = req.body;
+
   database
     .query(
       "INSERT INTO movies(title, director, year, color, duration) VALUES (?,?,?,?,?)",
@@ -95,8 +103,14 @@ const deleteMoviesById = (req, res) => {
 
 // User handlers
 const getUsers = (req, res) => {
+  let sql = "select * from users";
+  let sqlValues = [];
+  req.query.language ? (sql += " where language = ?") && (sqlValues.unshift(req.query.language)) : null;
+  req.query.city ? (sql += " where city = ?") && (sqlValues.push(req.query.city)) : null;
+  req.query.language && req.query.city ? (sql = "select * from users where language = ? and city = ?") && (sqlValues.push(req.query.language, req.query.city)) : null;
+
   database
-    .query("select * from users")
+    .query(sql, sqlValues)
     .then(([users]) => {
       res.status(200).json(users);
     })
@@ -108,6 +122,7 @@ const getUsers = (req, res) => {
 
 const getUsersById = (req, res) => {
   const id = parseInt(req.params.id);
+
   database
     .query("select * from users where id = ?", [id])
     .then(([user]) => {
@@ -125,6 +140,7 @@ const getUsersById = (req, res) => {
 
 const postUsers = (req, res) => {
   const { firstname, lastname, email, city, language } = req.body;
+
   database
     .query(
       "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?,?,?,?,?)",
