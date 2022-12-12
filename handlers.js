@@ -103,7 +103,7 @@ const deleteMoviesById = (req, res) => {
 
 // User handlers
 const getUsers = (req, res) => {
-  let sql = "select * from users";
+  let sql = "select id, firstname, lastname, email, city, language from users";
   let sqlValues = [];
   req.query.language ? (sql += " where language = ?") && (sqlValues.unshift(req.query.language)) : null;
   req.query.city ? (sql += " where city = ?") && (sqlValues.push(req.query.city)) : null;
@@ -124,7 +124,7 @@ const getUsersById = (req, res) => {
   const id = parseInt(req.params.id);
 
   database
-    .query("select * from users where id = ?", [id])
+    .query("select firstname, lastname, email, city, language from users where id = ?", [id])
     .then(([user]) => {
       if (user.toString() != "") {
         res.status(200).json(user);
@@ -139,12 +139,12 @@ const getUsersById = (req, res) => {
 };
 
 const postUsers = (req, res) => {
-  const { firstname, lastname, email, city, language } = req.body;
+  const { firstname, lastname, email, city, language, hashedPassword } = req.body;
 
   database
     .query(
-      "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?,?,?,?,?)",
-      [firstname, lastname, email, city, language]
+      "INSERT INTO users(firstname, lastname, email, city, language, hashedPassword ) VALUES (?,?,?,?,?,?)",
+      [firstname, lastname, email, city, language, hashedPassword]
     )
     .then(([result]) => {
       res.location(`/api/users/${result.insertId}`).sendStatus(201);
