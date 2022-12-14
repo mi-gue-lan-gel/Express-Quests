@@ -3,6 +3,24 @@ const database = require("./database");
 const welcome = (req, res) => {
   res.send("Welcome to my favourite movie list");
 };
+// Login handlers
+const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
+  const userEmail = req.body.email;
+  database
+    .query("select id, firstname, lastname, email, city, language, hashedPassword from users where email = ?", [userEmail])
+    .then(([user]) => {
+      if (user.toString() != "") {
+        req.user = user;
+        next();
+      } else {
+        res.status(401);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send(`This ${err} ocurred`);
+    });
+}
 
 // Movie handlers
 const getMovies = (req, res) => {
@@ -102,7 +120,7 @@ const deleteMoviesById = (req, res) => {
 
 
 // User handlers
-const getUsers = (req, res) => {
+const getUser = (req, res) => {
   let sql = "select id, firstname, lastname, email, city, language from users";
   let sqlValues = [];
   req.query.language ? (sql += " where language = ?") && (sqlValues.unshift(req.query.language)) : null;
@@ -120,7 +138,7 @@ const getUsers = (req, res) => {
     });
 };
 
-const getUsersById = (req, res) => {
+const getUserById = (req, res) => {
   const id = parseInt(req.params.id);
 
   database
@@ -138,7 +156,7 @@ const getUsersById = (req, res) => {
     });
 };
 
-const postUsers = (req, res) => {
+const postUser = (req, res) => {
   const { firstname, lastname, email, city, language, hashedPassword } = req.body;
 
   database
@@ -155,7 +173,7 @@ const postUsers = (req, res) => {
     });
 };
 
-const putUsersById = (req, res) => {
+const putUserById = (req, res) => {
   const { firstname, lastname, email, city, language } = req.body;
   const id = parseInt(req.params.id);
 
@@ -177,7 +195,7 @@ const putUsersById = (req, res) => {
     });
 };
 
-const deleteUsersById = (req, res) => {
+const deleteUserById = (req, res) => {
   const id = parseInt(req.params.id);
 
   database
@@ -199,14 +217,15 @@ const deleteUsersById = (req, res) => {
 
 module.exports = {
   welcome,
+  getUserByEmailWithPasswordAndPassToNext,
   getMovies,
   getMovieById,
   postMovies,
   putMoviesById,
   deleteMoviesById,
-  getUsers,
-  getUsersById,
-  postUsers,
-  putUsersById,
-  deleteUsersById
+  getUser,
+  getUserById,
+  postUser,
+  putUserById,
+  deleteUserById
 };
